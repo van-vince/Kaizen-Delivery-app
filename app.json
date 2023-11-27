@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "kaizen",
+    "name": "Kaizen",
     "slug": "kaizen",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash1.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FF8C00"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -27,15 +27,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/kaizen.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.kaizen",
+      "package": "com.kaizen.kaizen",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyCfARqjJgmhmIp2XDWlYnvv63x0rxvLFsA"
         }
-
 
       }
     },
@@ -48,5 +47,5 @@
       }
     }
   },
-  "scheme": "com.kaizen"
+  "scheme": "com.kaizen.kaizen"
 }

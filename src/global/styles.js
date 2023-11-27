@@ -1,4 +1,4 @@
-import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { getStatusBarHeight } from "react-native-status-bar-height"
 
 // 44 - on iPhoneX
 // 20 - on iOS device

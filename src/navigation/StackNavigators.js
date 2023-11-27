@@ -3,29 +3,18 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import HomeScreen from '../screens/HomeScreen';
 import RequestScreen from '../screens/RequestScreen';
 import DestinationScreen from '../screens/DestinationScreen';
-import ResultsScreen from '../screens/ResultsScreen';
+import ResultScreen from '../screens/ResultScreen';
 import OrderDetailsScreen from '../screens/OrderDetailsScreen';
 import Register from '../screens/authScreens/Register';
 import SignInScreen from '../screens/authScreens/SignInScreen';
+import DetailsScreen from '../screens/drawerScreens/DetailsScreen';
+import { title } from '../global/styles';
 
 const Home = createNativeStackNavigator();
 
-export function HomeStack(){
+export function HomeStack({navigation}){
     return (
-        
         <Home.Navigator>
-                {/* <Home.Screen 
-                name = 'Register'
-                component = {Register}
-                options = {{headerShown:false}}
-
-            /> */}
-            <Home.Screen 
-                name = 'SignInScreen'
-                component = {SignInScreen}
-                options = {{headerShown:false}}
-
-            />
             <Home.Screen 
                 name = 'HomeScreen'
                 component = {HomeScreen}
@@ -43,14 +32,20 @@ export function HomeStack(){
                 options = {{headerShown:false}}
             />
             <Home.Screen 
-                name = 'ResultsScreen'
-                component = {ResultsScreen}
+                name = 'ResultScreen'
+                component = {ResultScreen}
                 options = {{headerShown:false}}
 
             />
             <Home.Screen 
                 name = 'OrderDetailsScreen'
                 component = {OrderDetailsScreen}
+                options = {{headerShown:false}}
+
+            />
+            <Home.Screen 
+                name = 'DetailsScreen'
+                component = {DetailsScreen}
                 options = {{headerShown:false}}
 
             />

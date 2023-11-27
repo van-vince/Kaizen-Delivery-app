@@ -18,14 +18,3 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app)
 
 // const firebaseApp = initializeApp(firebaseConfig);
-
-// export const auth = initializeAuth(firebaseApp, {
-//   persistence: browserSessionPersistence,
-//   popupRedirectResolver: browserPopupRedirectResolver,
-// });
-
-
-// IOS: 421493064334-gn43gp39vlara8q1f5nuqlb5agj2had8.apps.googleusercontent.com
-// Android: 421493064334-1ucrk45siptq302fhdqivm7p8jblf4m5.apps.googleusercontent.com
-
-// "main": "node_modules/expo/AppEntry.js",

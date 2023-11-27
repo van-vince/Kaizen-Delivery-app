@@ -14,14 +14,10 @@ import { parameters } from "../../global/styles";
 import { AntDesign } from "@expo/vector-icons";
 import { AuthContext} from "../../context/contexts";
 
-const SignInScreen = ({navigation}) => {
-  
-  const {login} = useContext(AuthContext)
+const PasswordReset = ({navigation}) => {
 
   const [email, setEmail] = useState(null)
   const [password, setPassword] = useState(null)
-
-
 
   return (
     <SafeAreaView
@@ -41,23 +37,8 @@ const SignInScreen = ({navigation}) => {
             textAlign: "center",
           }}
         >
-          Sign In
+         Reset Your Password
         </Text>
-
-        <InputField
-          label={"Email ID"}
-          icon={
-            <MaterialIcons
-              name="alternate-email"
-              size={20}
-              color="#666"
-              style={{ marginRight: 5 }}
-            />
-          }
-          keyboardType="email-address"
-          value={email}
-          onChangeText={text => setEmail(text)}
-        />
 
         <InputField
           label={"Password"}
@@ -71,64 +52,33 @@ const SignInScreen = ({navigation}) => {
           }
           inputType="password"
           fieldButtonLabel={"Forgot?"}
-          fieldButtonFunction={() => navigation.navigate('ForgotPassword')}
+          fieldButtonFunction={() => {}}
+          value={password}
+          onChangeText={text => setPassword(text)}
+        />
+        <InputField
+          label={"Confirm Password"}
+          icon={
+            <Ionicons
+              name="ios-lock-closed-outline"
+              size={20}
+              color="#666"
+              style={{ marginRight: 5 }}
+            />
+          }
+          inputType="password"
+          fieldButtonLabel={"Forgot?"}
+          fieldButtonFunction={() => {}}
           value={password}
           onChangeText={text => setPassword(text)}
         />
         <CustomButton onPress={()=> login(email, password)} label={"Sign In"} />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginBottom: 30,
-          }}
-        >
-          <Text>Already registered?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <Text style={{ color: "#AD40AF", fontWeight: "700" }}>
-              {" "}
-              Register
-            </Text>
-          </TouchableOpacity>
-        </View>
       </View>
       <StatusBar style="light" backgroundColor="#FF8C00" translucent={true} />
     </SafeAreaView>
   );
 };
 
-export default SignInScreen;
+export default PasswordReset;
 
-{
-  /* <Text
-          style={{
-            fontSize: 25,
-            fontWeight: '500',
-            color: 'gray',
-            marginBottom: 30,
-            textAlign: 'center'
-          }}>
-          OR
-        </Text> */
-}
-{
-  /* <TouchableOpacity
-        style={{
-          backgroundColor: "#4285F4",
-          padding: 20,
-          borderRadius: 10,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 15,
-          marginTop: 10,
-          // marginBottom: 150,
-        }}
-        onPress={() => promptAsync()}
-      >
-        <AntDesign name="google" size={30} color="white" style={{marginRight:20}}/>
-        <Text style={{ fontWeight: "bold", color: "white", fontSize: 17 }}>
-          Sign In with Google
-        </Text>
-      </TouchableOpacity> */
-}
+

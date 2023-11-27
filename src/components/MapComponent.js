@@ -1,13 +1,14 @@
 import { Text, StyleSheet, View, Image } from 'react-native'
 import React, { useEffect, useRef, useContext } from 'react'
-import MapView, {PROVIDER_GOOGLE,} from 'react-native-maps'
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps'
+import { Marker } from "react-native-maps";
 import { mapStyle } from '../global/mapStyle'
 import { colors, parameters } from '../global/styles'
 import ThemedImage from '@rneui/themed/dist/Image'
-import MapViewDirections from 'react-native-maps-directions'
-import {GOOGLE_MAPS_APIKEY} from '@env'
-import { TravelTimeContext} from '../context/contexts';
-
+import  MapViewDirections  from 'react-native-maps-directions'
+import { GOOGLE_MAPS_APIKEY } from '@env'
+import { TravelTimeContext } from '../context/contexts'
+ 
 
 const MapComponent = ({userOrigin, userDestination, originAddress, destinationAddress}) =>  {
 
@@ -54,7 +55,7 @@ const MapComponent = ({userOrigin, userDestination, originAddress, destinationAd
                 // customMapStyle = {mapStyle}
                 ref = {mapRef}
                 showsUserLocation={true}
-                mapType='mutedStandard'
+                mapType="standard"
                 region={{
                   latitude:   5.614818,
                   longitude:  -0.186964,
@@ -63,22 +64,22 @@ const MapComponent = ({userOrigin, userDestination, originAddress, destinationAd
                 }}
             >
               {userOrigin.latitude != null &&
-                <MapView.Marker coordinate = {userOrigin} anchor = {{x:0.5,y:0.5}}>
+                <Marker  coordinate = {userOrigin}  anchor = {{x:0.5,y:0.5}}>
                   <Image 
                   source = {require('../../assets/location.png')}
                   style = {styles.markerOrigin2}
                   resizeMode = 'cover'
                   />
-                </MapView.Marker>
+                </Marker>
              }
               {userDestination.latitude != null &&
-                <MapView.Marker coordinate = {userDestination} anchor = {{x:0.5,y:0.5}}>
+                <Marker coordinate = {userDestination} anchor = {{x:0.5,y:0.5}}>
                   <Image 
                   source = {require('../../assets/location.png')}
                   style = {styles.markerDestination}
                   resizeMode = 'cover'
                   />
-                </MapView.Marker>
+                </Marker>
              }
 
              {/* Map view directions */}

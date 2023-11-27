@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -15,16 +15,23 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomButton from '../../components/CuctomButton';
 import { parameters } from '../../global/styles';
+import { AuthContext } from '../../context/contexts';
 
 const Register = ({navigation}) => {
 
+  const {register} = useContext(AuthContext)
+
+  const [name, setName] = useState(null)
+  const [email, setEmail] = useState(null)
+  const [contact, setContact] = useState(null)
+  const [password, setPassword] = useState(null)
+
+
   return (
-    <SafeAreaView style={{flex: 1, justifyContent: 'center', paddingTop:parameters.statusBarHeight}}>
+    <SafeAreaView style={{flex: 1, justifyContent: 'center',  paddingTop: 150}}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{paddingHorizontal: 25}}>
-        <View style={{alignItems: 'center'}}>
-        </View>
 
         <Text
           style={{
@@ -32,15 +39,15 @@ const Register = ({navigation}) => {
             fontWeight: '500',
             color: '#333',
             marginBottom: 30,
+            justifyContent: 'center',
+            alignItems: 'center'
           }}>
           Register
         </Text>
-        <Text style={{textAlign: 'center', color: '#666', marginBottom: 30}}>
-          Or, register with email ...
-        </Text>
-
         <InputField
-          label={'Full Name'}
+          label={'Username'}
+          value={name}
+          onChangeText={text => setName(text)}
           icon={
             <Ionicons
               name="person-outline"
@@ -62,6 +69,22 @@ const Register = ({navigation}) => {
             />
           }
           keyboardType="email-address"
+          value={email}
+          onChangeText={text => setEmail(text)}
+        />
+        <InputField
+          label={'Contact'}
+          icon={
+            <MaterialIcons
+              name="call"
+              size={20}
+              color="#666"
+              style={{marginRight: 5}}
+            />
+          }
+          keyboardType="phone-pad"
+          value={contact}
+          onChangeText={text => setContact(text)}
         />
 
         <InputField
@@ -75,38 +98,11 @@ const Register = ({navigation}) => {
             />
           }
           inputType="password"
+          value={password}
+          onChangeText={text => setPassword(text)}
         />
 
-        <InputField
-          label={'Confirm Password'}
-          icon={
-            <Ionicons
-              name="ios-lock-closed-outline"
-              size={20}
-              color="#666"
-              style={{marginRight: 5}}
-            />
-          }
-          inputType="password"
-        />
-
-        <View
-          style={{
-            flexDirection: 'row',
-            borderBottomColor: '#ccc',
-            borderBottomWidth: 1,
-            paddingBottom: 8,
-            marginBottom: 30,
-          }}>
-          <Ionicons
-            name="calendar-outline"
-            size={20}
-            color="#666"
-            style={{marginRight: 5}}
-          />
-        </View>
-
-        <CustomButton label={'Register'} onPress={() => {}} />
+        <CustomButton label={'Register'} onPress={() => register(name, email, contact, password)} />
 
         <View
           style={{

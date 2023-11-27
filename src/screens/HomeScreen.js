@@ -7,6 +7,9 @@ import { filterData, carsAround } from '../global/data'
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps'
 import { mapStyle } from '../global/mapStyle'
 import * as Location from 'expo-location'
+import Carousel from 'react-native-snap-carousel'
+import { slideData } from '../global/sliderData'
+import BannerSlider from '../components/slider'
 
 navigator.geolocation = require('react-native-geolocation-service')
 
@@ -45,12 +48,15 @@ const HomeScreen = ({navigation}) => {
   };
 
   const _map = useRef(1);
- 
 
   useEffect(() => {
     checkPermission();
     getLocation()
   }, [])
+
+  const renderBanner = ({item, index}) => {
+    return <BannerSlider data={item} /> 
+  }
   
 
   return (
@@ -87,8 +93,8 @@ const HomeScreen = ({navigation}) => {
             </View>
           </View>
 
-          <View style = {styles.view0}>
-              <FlatList 
+          <View style = {{marginBottom: 15, marginTop: 15}}>
+              {/* <FlatList 
                 numRows={3}
                 horizontal ={true}
                 showsHorizontalScrollIndicator ={false}
@@ -104,11 +110,19 @@ const HomeScreen = ({navigation}) => {
                         </View>
                       </View>
                 )}
-              />
+              /> */}
+               <Carousel 
+              ref={(c) => { this._carousel = c; }}
+              data={slideData}
+              renderItem={renderBanner}
+              sliderWidth={SCREEN_WIDTH - 10}
+              itemWidth={300}
+              loop={true}
+            />
             </View>
 
             {/* <Text style = {styles.text4}>Around you</Text> */}
-            <View style = {{alignItems:'center', justifyContent:'center', paddingBottom: 15}}> 
+            <View style = {{alignItems:'center', justifyContent:'center', paddingBottom: 15, borderRadius:10}}> 
                 <MapView
                 ref={_map}
                   provider={PROVIDER_GOOGLE}
@@ -126,14 +140,12 @@ const HomeScreen = ({navigation}) => {
                           // resizeMode = 'cover'
                         />
                     </Marker>
-                  )
-
-                  }
+                  )}
                 </MapView>
             </View>
             
             <TouchableOpacity style = {styles.view3} onPress={()=>{navigation.navigate("RequestScreen", {state:0})}}>
-                  <Text style = {styles.text3}>Deliver Now..</Text>
+                  <Text style = {styles.text3}>Needs a courier ??</Text>
               
               <View style = {styles.view4}>
               <Icon type = 'material-community'

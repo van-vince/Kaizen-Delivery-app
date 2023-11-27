@@ -38,3 +38,14 @@ export const TravelTimeReducer = (state, action) =>{
         return state
     }
 }
+
+export const OrdersReducer = (state, action) =>{
+    switch (action.type){
+        case 'ADD_ORDERS':
+            return{
+                orders:action.payload.orders, 
+            }
+        default:
+        return state
+    }
+}

@@ -10,13 +10,14 @@ import {
 } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import { colors, parameters } from "../global/styles";
-import { rideData } from "../global/data";
+// import { rideData } from "../global/data";
 import MapComponent from "../components/MapComponent";
 import { Icon, Avatar } from "@rneui/themed";
 import { OriginContext, DestinationContext, TravelTimeContext } from "../context/contexts";
 import { FlatList } from "react-native-gesture-handler";
 import 'intl';
 import 'intl/locale-data/jsonp/en';
+
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -36,17 +37,17 @@ const data = [
   },
 ];
 
-const RequestScreen = ({ navigation, route }) => {
+const ResultScreen = ({ navigation, route }) => {
 
-  const { origin, dispatchOrigin } = useContext(OriginContext);
+  const { origin} = useContext(OriginContext);
   const [userOrigin, setUserOrigin] = useState({latitude: origin.latitude, longitude: origin.longitude,});
   const [originAddress, setOriginAddress] = useState(origin.address)
 
-  const { destination, dispatchDestination } = useContext(DestinationContext);
+  const { destination} = useContext(DestinationContext);
   const [userDestination, setUserDestination] = useState({latitude: destination.latitude, longitude: destination.longitude,});
   const [destinationAddress, setDestinationAddress] = useState(destination.address)
 
-  const { travelTime, dispatchTravelTime } = useContext(TravelTimeContext);
+  const { travelTime} = useContext(TravelTimeContext);
   const [userTravelTime, setUserTravelTime ] = useState({distance:travelTime.distance, duration:travelTime.duration})
 
   // console.log(userTravelTime)
@@ -177,18 +178,17 @@ const RequestScreen = ({ navigation, route }) => {
             <TouchableOpacity
             onPress={()=>{navigation.navigate("OrderDetailsScreen")}}
             disabled={!selected} 
-            style={{backgroundColor:'black',padding:5}}>
+            style={{backgroundColor:'black',padding:10}}>
               <Text style={{textAlign:'center',color:'white', fontSize:16 }}>Choose {selected?.title}</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-
     </SafeAreaView>
   );
 };
 
-export default RequestScreen;
+export default ResultScreen;
 
 const styles = StyleSheet.create({
   container1: { flex: 1, paddingTop: parameters.statusBarHeight },
