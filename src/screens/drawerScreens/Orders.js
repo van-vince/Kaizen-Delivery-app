@@ -10,10 +10,11 @@ import {
 import React, { useContext, useState, useEffect } from "react";
 import CustomSwitch from "../../components/CustumSwitch";
 import OrderItem from "../../components/OrderItems";
-import { OrderContext } from "../../context/contexts";
+import { AuthContext, OrderContext } from "../../context/contexts";
 import axios from "axios";
 
-const apiUrl = " https://cattle-fair-filly.ngrok-free.app";
+
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 const Orders = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState(1);
@@ -24,22 +25,29 @@ const Orders = ({ navigation }) => {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
+  const { userInfo } = useContext(AuthContext);
+  const customer = userInfo?.customer;
+
+  const id = customer._id;
+
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
+      // window.location.reload()
       setRefreshing(false);
     }, 2000);
   }, []);
+
 
   useEffect(() => {
     const orders = async () => {
       setIsLoading(true);
       await axios
-        .get(`${apiUrl}/orders`)
+        .get(`${apiUrl}/customers/${id}`)
         .then(async (res) => {
-          setCurrentOrders(res.data);
           // console.log(res.data)
-          dispatchOrders({ type: "ADD_ORDERS", payload: { orders: res.data } });
+          setCurrentOrders(res.data.allOrders);
+          dispatchOrders({ type: "ADD_ORDERS", payload: { orders: res.data.allOrders } });
         })
         .catch((err) => {
           alert(err);
@@ -47,9 +55,11 @@ const Orders = ({ navigation }) => {
       setIsLoading(false);
     };
     orders();
-  }, []);
+  }, [currentOrders]);
 
   const newOrders = currentOrders;
+
+  const date = new Date(newOrders[0]?.updatedAt)
 
   const onSelectSwitch = (value) => {
     setActiveTab(value);
@@ -76,13 +86,14 @@ const Orders = ({ navigation }) => {
               key={item.id}
               title={item.customerInfo[0].name}
               dropOff={item.customerInfo[0].location}
-              subTitle={item.createdAt}
+              subTitle={date.toUTCString().substring(0, 22)}
               photo={require("../../../assets/package3.png")}
               onPress={() => {
                 navigation.navigate("DetailsScreen", { id: item._id });
               }}
             />
-          ))}
+          ))
+          }
         {isLoading && <ActivityIndicator size={"large"} />}
         {activeTab === 2 && <Text>Completed Orders</Text>}
       </ScrollView>

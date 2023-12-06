@@ -77,28 +77,11 @@ const DestinationScreen = ({ navigation }) => {
             minLenght={2}
             fetchDetails={true}
             autoFoccus={true}
+            styles={styles.googleplaces}
             query={{
               key: GOOGLE_MAPS_APIKEY,
               language: "en",
               components: "country:gh",
-            }}
-            styles={{
-              container: {
-                height: "50%",
-              },
-              textInputContainer: {
-                marginTop: 10,
-                margin: 5,
-              },
-              textInput: {
-                height: 50,
-                color: "#5d5d5d",
-                fontSize: 16,
-                borderWidth: 0.5,
-              },
-              predefinedPlacesDescription: {
-                color: "#1faadb",
-              },
             }}
             onPress={(data, details = null) => {
               // console.log(details)
@@ -125,28 +108,11 @@ const DestinationScreen = ({ navigation }) => {
           minLenght={2}
           fetchDetails={true}
           autoFoccus={true}
+          styles={styles.googleplaces}
           query={{
             key: GOOGLE_MAPS_APIKEY,
             language: "en",
             components: "country:gh",
-          }}
-          styles={{
-            container: {
-              height: "50%",
-            },
-            textInputContainer: {
-              marginTop: 10,
-              margin: 5,
-            },
-            textInput: {
-              height: 50,
-              color: "#5d5d5d",
-              fontSize: 16,
-              borderWidth: 0.5,
-            },
-            predefinedPlacesDescription: {
-              color: "#1faadb",
-            },
           }}
           onPress={(data, details = null) => {
             dispatchDestination({
@@ -220,4 +186,23 @@ const styles = StyleSheet.create({
     zIndex: 17,
     elevation: 8,
   },
+
+  googleplaces: {
+    container: {
+      height: "50%",
+    },
+    textInputContainer: {
+      marginTop: 10,
+      margin: 5,
+    },
+    textInput: {
+      height: 50,
+      color: "#5d5d5d",
+      fontSize: 16,
+      borderWidth: 0.5,
+    },
+    predefinedPlacesDescription: {
+      color: "#1faadb",
+    },
+  }
 });

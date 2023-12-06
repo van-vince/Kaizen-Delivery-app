@@ -4,6 +4,7 @@ import {
   DestinationReducer,
   TravelTimeReducer,
   OrdersReducer,
+  ChargeReducer,
 } from "../reducers/reducers";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
@@ -14,6 +15,7 @@ export const DestinationContext = createContext();
 export const TravelTimeContext = createContext();
 export const AuthContext = createContext();
 export const OrderContext = createContext()
+export const ChargeContext = createContext()
 
 export const OriginContextProvider = (props) => {
   const [origin, dispatchOrigin] = useReducer(OriginReducer, {
@@ -55,7 +57,7 @@ export const TravelTimeContextProvider = (props) => {
   );
 };
 
-const apiUrl = "https://collie-decent-sincerely.ngrok-free.app";
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
 export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -69,7 +71,7 @@ export const AuthProvider = ({ children }) => {
       name, email, contact, password
     })
     .then(async (res) => {
-      console.log(res.data);
+      // console.log(res.data);
       if(res?.data.success ===true){
         Alert.alert(res.data.message)
       }else{
@@ -90,7 +92,7 @@ export const AuthProvider = ({ children }) => {
       email
     })
     .then(async (res) => {
-      console.log(res.data);
+      // console.log(res.data);
       if(res?.data.success ===true){
        Alert.alert(res.data.message)
       }else{
@@ -106,13 +108,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = async ( email, password) => {
     setIsLoading(true);
+    // console.log(email, password)
     await axios
       .post(`${apiUrl}/customers/login`, {
         email,
         password,
       })
       .then(async (res) => {
-        console.log(res.data);
+        // console.log(res.data);
         if(res?.data.success ===true){
             let userInfo = res?.data;
             setUserInfo(userInfo);
@@ -151,7 +154,7 @@ export const AuthProvider = ({ children }) => {
        }
       setIsLoading(false);
     } catch (e) {
-      console.log(`isLoggedIn error ${e}`);
+      Alert.alert(`isLoggedIn error ${e}`);
     }
   };
 
@@ -185,5 +188,16 @@ export const OrderContextProvider = ({children}) => {
     <OrderContext.Provider value={{orders, dispatchOrders}} >
       {children}
     </OrderContext.Provider>
+  )
+}
+export const ChargeContextProvider = ({children}) => {
+  const [charges, dispatchCharges] = useReducer(ChargeReducer, {
+    charge: null,
+  });
+
+  return (
+    <ChargeContext.Provider value={{charges, dispatchCharges}} >
+      {children}
+    </ChargeContext.Provider>
   )
 }

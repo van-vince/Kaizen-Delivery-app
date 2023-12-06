@@ -9,6 +9,7 @@ import Register from '../screens/authScreens/Register';
 import SignInScreen from '../screens/authScreens/SignInScreen';
 import DetailsScreen from '../screens/drawerScreens/DetailsScreen';
 import { title } from '../global/styles';
+import SuccessScreen from '../screens/SuccessScreen';
 
 const Home = createNativeStackNavigator();
 
@@ -46,6 +47,12 @@ export function HomeStack({navigation}){
             <Home.Screen 
                 name = 'DetailsScreen'
                 component = {DetailsScreen}
+                options = {{headerShown:false}}
+
+            />
+            <Home.Screen 
+                name = 'SuccessScreen'
+                component = {SuccessScreen}
                 options = {{headerShown:false}}
 
             />

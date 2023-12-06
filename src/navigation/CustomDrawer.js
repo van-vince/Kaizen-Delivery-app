@@ -6,11 +6,33 @@ import { colors } from '../global/styles'
 import { AuthContext} from "../context/contexts"
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { Share } from "react-native";
 
 const CustomDrawer = props => {
 
   const {logout} = useContext(AuthContext)
   const {userInfo} = useContext(AuthContext)
+  const customer = userInfo?.customer;
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          'Kaizen Deliveries | Right on time',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
 
   return (
     <View style={{flex: 1}}>
@@ -21,7 +43,7 @@ const CustomDrawer = props => {
           source={require('../../assets/image-bg.jpeg')}
           style={{padding: 20}}>
           <Image
-            source={require('../../assets/blankProfilePic.jpg')}
+            source={{uri: `${customer.image}` }}
             style={{height: 80, width: 80, borderRadius: 40, marginBottom: 10}}
           />
           <Text
@@ -38,10 +60,10 @@ const CustomDrawer = props => {
                 color: '#fff',
                 marginRight: 5,
               }}>
-              280 Coins
+              Earn Coins
             </Text>
             <FontAwesome5 name="coins" size={14} color="#fff" />
-            <Text style={{color: 'white', marginLeft:10}}>5.00**</Text>
+            <Text style={{color: 'white', marginLeft:10}}>*5.00</Text>
           </View>
         </ImageBackground>
         <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 10}}>
@@ -53,6 +75,7 @@ const CustomDrawer = props => {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Ionicons name="share-social-outline" size={22} />
             <Text
+            onPress={onShare}
               style={{
                 fontSize: 15,
                 marginLeft: 5,

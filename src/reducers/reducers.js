@@ -49,3 +49,13 @@ export const OrdersReducer = (state, action) =>{
         return state
     }
 }
+export const ChargeReducer = (state, action) =>{
+    switch (action.type){
+        case 'ADD_CHARGES':
+            return{
+                charges:action.payload.charges, 
+            }
+        default:
+        return state
+    }
+}

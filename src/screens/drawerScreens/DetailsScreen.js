@@ -14,7 +14,6 @@ import React, { useContext, useState } from "react";
 import { OrderContext } from "../../context/contexts";
 import { Icon } from "@rneui/themed";
 import { colors, parameters } from "../../global/styles";
-import { format } from "date-fns";
 
 
 const windowWidth = Dimensions.get("window").width;
@@ -27,7 +26,7 @@ const DetailsScreen = ({ navigation, route }) => {
   // console.log(order)
 
   const data = order?.find((e) => e._id === id);
-  console.log(data);
+  // console.log(data);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -116,7 +115,7 @@ const DetailsScreen = ({ navigation, route }) => {
                 marginBottom: 10,
               }}
             >
-              {date.toUTCString()} 
+              {date.toUTCString().substring(0, 22)} 
             </Text>
           </View>
         </View>

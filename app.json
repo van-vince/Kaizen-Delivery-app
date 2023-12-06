@@ -4,7 +4,7 @@
     "slug": "kaizen",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/kaizen.png",
+    "icon": "./assets/app-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash1.png",
@@ -27,7 +27,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/kaizen.png",
+        "foregroundImage": "./assets/app-icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.kaizen.kaizen",
@@ -47,5 +47,14 @@
       }
     }
   },
+  "plugins": [
+    [
+      "expo-image-picker",
+      {
+        "photosPermission": "Let this app access your photos."
+      }
+    ]
+  ],
+
   "scheme": "com.kaizen.kaizen"
 }

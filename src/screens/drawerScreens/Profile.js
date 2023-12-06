@@ -5,12 +5,12 @@ import {
   ScrollView,
   Image,
   Modal,
-  Pressable,
   StyleSheet,
   Alert,
   TouchableOpacity,
   TextInput,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../context/contexts";
@@ -18,18 +18,43 @@ import { Icon } from "@rneui/themed";
 import { colors } from "../../global/styles";
 import { Controller, useForm } from "react-hook-form";
 import axios from "axios";
+import * as ImagePicker from "expo-image-picker";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import * as FileSystem from "expo-file-system";
 
 const windowWidth = Dimensions.get("window").width;
 
-const Profile = () => {
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
+const Profile = ({ navigation }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const { userInfo } = useContext(AuthContext);
   const customer = userInfo?.customer;
 
-  const id = customer._id
+  const id = customer._id;
 
-  console.log(id);
-
-  const [modalVisible, setModalVisible] = useState(false);
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [5, 5],
+      quality: 1,
+    });
+    // console.log(result);
+    if (!result.canceled) {
+      const base64 = await FileSystem.readAsStringAsync(result.uri, {
+        encoding: "base64",
+      });
+      // setImage(result.assets[0].uri);
+      setImage(base64);
+    }
+  };
+  // const base64 =  convertBase64(image);
+  // console.log(image)
 
   const {
     control,
@@ -44,25 +69,30 @@ const Profile = () => {
     },
   });
 
-  const apiUrl = 'https://knowing-muskrat-cleanly.ngrok-free.app'
-
-  const onSubmit = async(data) => {
+  const onSubmit = async (data) => {
+    setIsLoading(true);
     await axios
-    .patch(`${apiUrl}/customers/:${id}`, {
-      data
-    })
-    .then(async (res) => {
-      console.log(res.data);
-      if(res?.data.success ===true){
-        Alert.alert(res.data.message)
-      }else{
-          Alert.alert(res.data?.message)
-      }
-    })
-    .catch((err) => {
-      Alert.alert(err);
-    });
-}
+      .patch(`${apiUrl}/customers/${id}`, {
+        name: data.name,
+        email: data.email,
+        contact: data.contact,
+        location: data.location,
+        image: `data:image/png;base64,${image}`,
+      })
+      .then(async (res) => {
+        // console.log(res.data);
+        if (res?.data.success === true) {
+          Alert.alert(res.data.message);
+          navigation.goBack();
+        } else {
+          Alert.alert(res.data?.message);
+        }
+      })
+      .catch((err) => {
+        Alert.alert(err);
+      });
+    setIsLoading(false);
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, margin: 10 }}>
@@ -96,18 +126,56 @@ const Profile = () => {
                     size={25}
                   />
                 </View>
-
+                {isLoading && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      bottom: '50%',
+                      backgroundColor: colors.grey3,
+                      borderRadius: 30,
+                      padding: 10,
+                      elevation: 5
+                    }}
+                  >
+                    <ActivityIndicator size={"large"} color="#fff"  />
+                  </View>
+                )}
                 <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                 >
                   <Image
                     // source={require("../../../assets/blankProfilePic.jpg")}
-                    source={{ uri: `${customer.image}` }}
+                    source={{
+                      uri: image
+                        ? `data:image/png;base64,${image}`
+                        : `${customer.image}`,
+                    }}
                     style={{
                       height: 100,
                       width: 100,
                       borderRadius: 50,
                       marginBottom: 10,
+                    }}
+                  />
+                  <Ionicons
+                    onPress={pickImage}
+                    type="material-community"
+                    name="camera"
+                    color={colors.grey2}
+                    size={30}
+                    style={{
+                      zIndex: 9,
+                      position: "absolute",
+                      right: 75,
+                      bottom: 10,
+                      backgroundColor: colors.grey5,
+                      padding: 2,
+                      borderRadius: 20,
                     }}
                   />
                 </View>

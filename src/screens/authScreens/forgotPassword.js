@@ -38,7 +38,7 @@ const ForgotPassword = ({navigation}) => {
             textAlign: "center",
           }}
         >
-          Forgor Your password?
+          Forgot Your password?
         </Text>
 
         <InputField

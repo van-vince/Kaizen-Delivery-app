@@ -8,11 +8,11 @@ export const filterData = [
 
 
 export const rideData =[
-    {street:"32 Olivia Rd",area:"Klipfontein 83-Ir,Boksburg",id:"0"},
-    {street:"Hughes Industrial Park",area:"Hughes,Boksburg",id:"1"},
-    {street:"32 Olivia Road",area:" East Rand,Ekurhuleni,Gauteng,1459",id:"2"},
-    {street:"Total Boksburg",area:"35 Atlas Rd,Anderbolt,Boksburg",id:"3"},
-    {street:"179 8th Ave",area:"Bezuidenhout Valley,Johannesburg",id:"4"},
+    {street:"Marina mall accra",area:"Airport bypass road Accra Ghana",id:"0"},
+    {street:"Madina Zongo",area:"madina, Accra Ghana",id:"1"},
+    {street:"Numguah Secondary School",area:"Accra Tema beach road, Nunguah Ghana",id:"2"},
+    {street:"37 Military Hospital",area:"Liberation Road 37 millitary hospital",id:"3"},
+    {street:"Independence Avenue",area:"Independence Avenue Accra Ghana",id:"4"},
 ];
 
 export const carTypeData =[

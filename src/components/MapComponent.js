@@ -1,4 +1,4 @@
-import { Text, StyleSheet, View, Image } from 'react-native'
+import { Text, StyleSheet, View, Image, Alert } from 'react-native'
 import React, { useEffect, useRef, useContext } from 'react'
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps'
 import { Marker } from "react-native-maps";
@@ -41,7 +41,7 @@ const MapComponent = ({userOrigin, userDestination, originAddress, destinationAd
                 duration:data.rows[0].elements[0].duration
             }})
             // console.log(data)
-            }).catch((err)=> console.log(err))
+            }).catch((err)=> Alert.alert(err))
       }
        getTravelTime();      
     },[originAddress, destinationAddress, GOOGLE_MAPS_APIKEY])

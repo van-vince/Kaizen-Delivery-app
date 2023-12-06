@@ -42,7 +42,7 @@ const Register = ({navigation}) => {
             justifyContent: 'center',
             alignItems: 'center'
           }}>
-          Register
+          Register an account
         </Text>
         <InputField
           label={'Username'}

@@ -83,7 +83,7 @@ const SignInScreen = ({navigation}) => {
             marginBottom: 30,
           }}
         >
-          <Text>Already registered?</Text>
+          <Text>Dont have an account?</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
             <Text style={{ color: "#AD40AF", fontWeight: "700" }}>
               {" "}

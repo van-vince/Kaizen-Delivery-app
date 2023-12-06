@@ -21,17 +21,19 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { colors, parameters } from "../global/styles";
 import { rideData } from "../global/data";
-import {MapComponent} from "../components/MapComponent";
+import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps'
 import { Icon, Avatar } from "@rneui/themed";
+import { mapStyle } from '../global/mapStyle'
+import { filterData, carsAround } from '../global/data'
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const RequestScreen = ({ navigation, route }) => {
   const bottomSheet1 = useRef(1);
+  const _map = useRef(1);
 
-
-  const snapPoints1 = useMemo(() => ["70%"], []);
+  const snapPoints1 = useMemo(() => ["25%", "50%",], []);
 
   const handleSheetChange1 = useCallback((index) => {}, []);
 
@@ -124,7 +126,38 @@ const RequestScreen = ({ navigation, route }) => {
         </View>
       </View>
 
-      {/* <MapComponent  userOrigin = {userOrigin} userDestination = {userDestination}/> */}
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          paddingBottom: 15,
+          borderRadius: 10,
+        }}
+      >
+        <MapView
+          ref={_map}
+          provider={PROVIDER_GOOGLE}
+          style={{width: '100%', height: '100%'}}
+          // customMapStyle={mapStyle}
+          showsUserLocation={true}
+          followsUserLocation={true}
+          initialRegion={{
+            ...carsAround[0],
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+          }}
+        >
+          {carsAround.map((item, index) => (
+            <Marker coordinate={item} key={index.toString()}>
+              <Image
+                source={require("../../assets/rider.png")}
+                style={styles.carsAround}
+                // resizeMode = 'cover'
+              />
+            </Marker>
+          ))}
+        </MapView>
+      </View>
 
       {/* Bottom sheet */}
       <BottomSheet
@@ -150,7 +183,7 @@ const RequestScreen = ({ navigation, route }) => {
                 />
               </View>
               <View>
-                <Text style={styles.text9}>Saved Places</Text>
+                <Text style={styles.text9}>Some Places Around</Text>
               </View>
             </View>
           }
@@ -203,6 +236,16 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
   },
+  map:{
+    height: 150,
+     marginVertical: 0,
+     width:SCREEN_WIDTH*0.92
+    },
+      carsAround: {
+    width: 25,
+    height: 25,
+    
+    }, 
 
   view1: {
     position: "absolute",

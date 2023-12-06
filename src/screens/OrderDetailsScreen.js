@@ -8,7 +8,9 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  Button
+  Button,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, {
   useState,
@@ -25,14 +27,18 @@ import {
   OriginContext,
   DestinationContext,
   TravelTimeContext,
+  AuthContext,
+  ChargeContext,
 } from "../context/contexts";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 
-const SCREEN_HEIGHT = Dimensions.get("window").height;
-const SCREEN_WIDTH = Dimensions.get("window").width;
+// const SCREEN_HEIGHT = Dimensions.get("window").height;
+// const SCREEN_WIDTH = Dimensions.get("window").width;
 
-const RequestScreen = ({ navigation, route }) => {
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
+const OrderDetailsScreen = ({ navigation, route }) => {
   const { origin } = useContext(OriginContext);
   const [originAddress, setOriginAddress] = useState(origin.address);
 
@@ -41,46 +47,86 @@ const RequestScreen = ({ navigation, route }) => {
     destination.address
   );
 
-  const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm({
-    defaultValues:{
-        location: originAddress,
-        cusLocation: destinationAddress
-    }
+  const [isLoading, setIsLoading] = useState(false);
+  const { userInfo } = useContext(AuthContext);
+  const customer = userInfo?.customer;
+
+
+  const { id } = route.params;
+  const { charges } = useContext(ChargeContext);
+  const charge = charges?.charges;
+
+  const price = charge?.find((e) => e.id === id);
+  const customerCharge = price.price
+  // console.log(customer)
+  // console.log(customerCharge)
+
+
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      location: originAddress,
+      contact: customer.contact,
+      name: customer.name,
+      cusLocation: destinationAddress,
+      deliveryCharge: customerCharge
+    },
   });
 
-  const apiUrl = 'https://knowing-muskrat-cleanly.ngrok-free.app'
-
-  const onSubmit = async(data) => {
+  
+  const onSubmit = async (data) => {
+    setIsLoading(true);
     await axios
-    .post(`${apiUrl}/orders`, {
-      storeInfo: {
-        name: data.name,
-        location: data.location,
-        contact: data.contact
-      },
-      customerInfo: {
-        name: data.cusName,
-        location: data.cusLocation,
-        contact: data.cusContact
-      },
-      itemType: data.itemType,
-      price: data.price
-    })
-    .then(async (res) => {
-      console.log(res.data);
-      if(res?.data.success ===true){
-        alert(res.data.message)
-      }else{
-          alert(res.data?.message)
-      }
-    })
-    .catch((err) => {
-      alert(err);
-    });
-}
+      .post(`${apiUrl}/orders`, {
+        storeInfo: {
+          name: data.name,
+          location: data.location,
+          contact: data.contact,
+        },
+        customerInfo: {
+          name: data.cusName,
+          location: data.cusLocation,
+          contact: data.cusContact,
+        },
+        itemType: data.itemType,
+        paymentType: data.paymentType,
+        amount: data.amount,
+        charge: data.deliveryCharge,
+        creator: customer._id,
+      })
+      .then(async (res) => {
+        // console.log(res.data);
+        if (res?.data.success === true) {
+          Alert.alert('Congratulations!!', res.data.message,
+          [
+            {
+              text: 'Ok',
+              onPress: () => navigation.navigate("HomeScreen"),
+              style: 'default',
+            },
+          ]
+          );
+        } else {
+          Alert.alert(res.data?.message);
+        }
+      })
+      .catch((err) => {
+        Alert.alert(err);
+      });
+      setIsLoading(false);
+  };
 
-
-  const [selectedValue, setSelectedValue] = useState();
+  if (isLoading)
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <ActivityIndicator size={"large"} />
+    </View>
+  );
 
   return (
     <ScrollView>
@@ -101,14 +147,19 @@ const RequestScreen = ({ navigation, route }) => {
                   onChangeText={onChange}
                   onBlur={onBlur}
                   value={value}
+                  editable = {false}
                 />
               )}
               name="location"
             />
-            {errors.location && ( <Text style={{ color: "red", marginBottom: 10 }}>This is required.</Text>)}
+            {errors.location && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                This is required.
+              </Text>
+            )}
           </View>
 
-          <View>
+            <View>
             <Controller
               control={control}
               rules={{
@@ -126,7 +177,11 @@ const RequestScreen = ({ navigation, route }) => {
               )}
               name="contact"
             />
-            {errors.contact && ( <Text style={{ color: "red", marginBottom: 10 }}>This is required.</Text>)}
+            {errors.contact && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                This is required.
+              </Text>
+            )}
           </View>
 
           <View>
@@ -146,11 +201,13 @@ const RequestScreen = ({ navigation, route }) => {
               )}
               name="name"
             />
-            {errors.name && ( <Text style={{ color: "red", marginBottom: 10 }}>This is required.</Text>)}
+            {errors.name && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                This is required.
+              </Text>
+            )}
           </View>
-
         </View>
-
         <View>
           <Text style={styles.text2}>Drop off address</Text>
           <View>
@@ -166,11 +223,16 @@ const RequestScreen = ({ navigation, route }) => {
                   onChangeText={onChange}
                   onBlur={onBlur}
                   value={value}
+                  editable = {false}
                 />
               )}
               name="cusLocation"
             />
-            {errors.cusLocation && ( <Text style={{ color: "red", marginBottom: 10 }}>This is required.</Text>)}
+            {errors.cusLocation && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                This is required.
+              </Text>
+            )}
           </View>
 
           <View>
@@ -191,7 +253,11 @@ const RequestScreen = ({ navigation, route }) => {
               )}
               name="cusContact"
             />
-            {errors.cusContact && ( <Text style={{ color: "red", marginBottom: 10 }}>This is required.</Text>)}
+            {errors.cusContact && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                This is required.
+              </Text>
+            )}
           </View>
 
           <View>
@@ -211,13 +277,42 @@ const RequestScreen = ({ navigation, route }) => {
               )}
               name="cusName"
             />
-            {errors.cusName && ( <Text style={{ color: "red", marginBottom: 10 }}>This is required.</Text>)}
+            {errors.cusName && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                This is required.
+              </Text>
+            )}
           </View>
-
         </View>
 
         <View style={{ marginTop: 30 }}>
-        <View>
+          <View>
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Delivery Charge"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  editable = {false}
+                  keyboardType="number-pad"
+                />
+              )}
+              name="deliveryCharge"
+            />
+            {errors.deliveryCharge && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                This is required.
+              </Text>
+            )}
+          </View>
+
+          <View>
             <Controller
               control={control}
               rules={{
@@ -234,27 +329,41 @@ const RequestScreen = ({ navigation, route }) => {
               )}
               name="itemType"
             />
-            {errors.itemType && ( <Text style={{ color: "red", marginBottom: 10 }}>This is required.</Text>)}
+            {errors.itemType && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                This is required.
+              </Text>
+            )}
           </View>
 
           <View style={styles.view2}>
-            
-            <Picker
-              selectedValue={selectedValue}
-              style={styles.picker}
-              onValueChange={(itemValue, itemIndex) =>
-                setSelectedValue(itemValue)
-              }
-            >
-              <Picker.Item
-                label="Payment Type"
-                value=""
-                style={{ border: 1 }}
-              />
-              <Picker.Item label="COD" value="cod" />
-              <Picker.Item label="Card" value="card" />
-            </Picker>
-            
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Picker
+                  selectedValue={value}
+                  style={styles.picker}
+                  onValueChange={onChange}
+                >
+                  <Picker.Item
+                    label="Payment Type"
+                    value={""}
+                    style={{ border: 1 }}
+                  />
+                  <Picker.Item label="COD" value="COD" />
+                  <Picker.Item label="Card" value="PAID" />
+                </Picker>
+              )}
+              name="paymentType"
+            />
+            {errors.paymentType && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                This is required.
+              </Text>
+            )}
           </View>
 
           <View>
@@ -266,28 +375,38 @@ const RequestScreen = ({ navigation, route }) => {
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   style={styles.textInput}
-                  placeholder="Price"
+                  placeholder="Amount"
                   onChangeText={onChange}
                   onBlur={onBlur}
                   value={value}
                   keyboardType="number-pad"
                 />
               )}
-              name="price"
+              name="amount"
             />
-            {errors.price && ( <Text style={{ color: "red", marginBottom: 10 }}>This is required.</Text>)}
+            {errors.amount && (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                This is required.
+              </Text>
+            )}
           </View>
-
         </View>
 
         <View>
           <TouchableOpacity
-            title='Submit'
+            title="Submit"
             // disabled={isSubmitting}
             onPress={handleSubmit(onSubmit)}
-            style={{ backgroundColor: "black", padding: 12, borderRadius:5, marginTop:10}}
+            style={{
+              backgroundColor: "black",
+              padding: 12,
+              borderRadius: 5,
+              marginTop: 10,
+            }}
           >
-            <Text style={{textAlign:'center',color:'white', fontSize:16 }}>Submit</Text>   
+            <Text style={{ textAlign: "center", color: "white", fontSize: 16 }}>
+              Submit
+            </Text>
           </TouchableOpacity>
         </View>
         <StatusBar style="light" backgroundColor="#FF8C00" translucent={true} />
@@ -296,7 +415,7 @@ const RequestScreen = ({ navigation, route }) => {
   );
 };
 
-export default RequestScreen;
+export default OrderDetailsScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -343,24 +462,4 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
-
-
-
-{/* <View style={styles.view2}>
-<Picker
-  selectedValue={selectedValue}
-  style={styles.picker}
-  onValueChange={(itemValue, itemIndex) =>
-    setSelectedValue(itemValue)
-  }
->
-  <Picker.Item
-    label="Payment Type"
-    value=""
-    style={{ border: 1 }}
-  />
-  <Picker.Item label="COD" value="cod" />
-  <Picker.Item label="Card" value="card" />
-</Picker>
-</View> */}
 
