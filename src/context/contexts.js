@@ -108,14 +108,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = async ( email, password) => {
     setIsLoading(true);
-    // console.log(email, password)
+    console.log(email, password)
     await axios
       .post(`${apiUrl}/customers/login`, {
         email,
         password,
       })
       .then(async (res) => {
-        // console.log(res.data);
+        console.log(res.data);
         if(res?.data.success ===true){
             let userInfo = res?.data;
             setUserInfo(userInfo);

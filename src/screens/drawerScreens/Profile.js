@@ -70,6 +70,7 @@ const Profile = ({ navigation }) => {
   });
 
   const onSubmit = async (data) => {
+    console.log(data);
     setIsLoading(true);
     await axios
       .patch(`${apiUrl}/customers/${id}`, {
@@ -80,7 +81,7 @@ const Profile = ({ navigation }) => {
         image: `data:image/png;base64,${image}`,
       })
       .then(async (res) => {
-        // console.log(res.data);
+        console.log(res.data);
         if (res?.data.success === true) {
           Alert.alert(res.data.message);
           navigation.goBack();
