@@ -30,14 +30,6 @@ const Orders = ({ navigation }) => {
 
   const id = customer._id;
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      // window.location.reload()
-      setRefreshing(false);
-    }, 2000);
-  }, []);
-
 
   useEffect(() => {
     const orders = async () => {
@@ -57,9 +49,26 @@ const Orders = ({ navigation }) => {
     orders();
   }, [currentOrders]);
 
-  const newOrders = currentOrders;
+  // const onRefresh = React.useCallback(() => {
+  //   setRefreshing(true);
+  //   setTimeout(() => {
+  //      axios
+  //       .get(`${apiUrl}/customers/${id}`)
+  //       .then(async (res) => {
+  //         // console.log(res.data)
+  //         setCurrentOrders(res.data.allOrders);
+  //         dispatchOrders({ type: "ADD_ORDERS", payload: { orders: res.data.allOrders } });
+  //       })
+  //       .catch((err) => {
+  //         alert(err);
+  //       });
+  //     setRefreshing(false);
+  //   }, 2000);
+  // }, []);
 
-  const date = new Date(newOrders[0]?.updatedAt)
+  const newOrders = [...currentOrders].sort((a, b) => b.id - a.id)
+  // console.log(newOrders)
+
 
   const onSelectSwitch = (value) => {
     setActiveTab(value);
@@ -68,25 +77,26 @@ const Orders = ({ navigation }) => {
   return (
     <SafeAreaView>
       <View style={{ marginVertical: 10 }}>
-        <CustomSwitch
+        {/* <CustomSwitch
           selectionMode={1}
           option1={"Active Orders"}
           option2={"Completed Orders"}
           onSelectSwitch={onSelectSwitch}
-        />
+        /> */}
       </View>
       <ScrollView
         // refreshControl={
         //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         // }
       >
-        {activeTab === 1 &&
+        {/* {activeTab === 1 && */}
+        {
           newOrders?.map((item, index) => (
             <OrderItem
               key={item.id}
               title={item.customerInfo[0].name}
               dropOff={item.customerInfo[0].location}
-              subTitle={date.toUTCString().substring(0, 22)}
+              subTitle={item.createdAt.replace('T', '  ').substring(0, 17)}
               photo={require("../../../assets/package3.png")}
               onPress={() => {
                 navigation.navigate("DetailsScreen", { id: item._id });
@@ -95,7 +105,7 @@ const Orders = ({ navigation }) => {
           ))
           }
         {isLoading && <ActivityIndicator size={"large"} />}
-        {activeTab === 2 && <Text>Completed Orders</Text>}
+        {/* {activeTab === 2 && <Text>Completed Orders</Text>} */}
       </ScrollView>
     </SafeAreaView>
   );

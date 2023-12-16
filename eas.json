@@ -25,9 +25,19 @@
     "preview3": {
       "developmentClient": true
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.kaizendeliveries.com",
+        "GOOGLE_MAPS_APIKEY" : "AIzaSyCfARqjJgmhmIp2XDWlYnvv63x0rxvLFsA"
+      }
+    }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "/Users/vanvince/Downloads/uberclone-api-a499bed3932e.json",
+        "track": "internal"
+      }
+    }
   }
 }

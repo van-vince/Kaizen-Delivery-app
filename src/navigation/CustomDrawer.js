@@ -18,7 +18,7 @@ const CustomDrawer = props => {
     try {
       const result = await Share.share({
         message:
-          'Kaizen Deliveries | Right on time',
+          'https://play.google.com/store/apps/details?id=com.vanvince.kaizen',
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {

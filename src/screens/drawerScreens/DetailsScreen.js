@@ -404,7 +404,7 @@ const DetailsScreen = ({ navigation, route }) => {
             padding: 3,
           }}
         >
-          Payment type
+         Delivery Type
         </Text>
         <Text
           style={{
@@ -415,9 +415,9 @@ const DetailsScreen = ({ navigation, route }) => {
             padding: 3,
           }}
         >
-          COD
+          {data?.deliveryType}
         </Text>
-        <Text
+        {/* <Text
           style={{
             color: "#333",
             fontSize: 16,
@@ -439,7 +439,7 @@ const DetailsScreen = ({ navigation, route }) => {
           }}
         >
           Ghs {data?.price}
-        </Text>
+        </Text> */}
       </ScrollView>
     </SafeAreaView>
   );

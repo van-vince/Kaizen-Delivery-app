@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
 
   const register =async(name, email, contact, password) => {
+    console.log(email)
     setIsLoading(true);
     await axios
     .post(`${apiUrl}/customers`, {
@@ -73,20 +74,21 @@ export const AuthProvider = ({ children }) => {
     .then(async (res) => {
       // console.log(res.data);
       if(res?.data.success ===true){
-        Alert.alert(res.data.message)
+        alert(res.data.message)
       }else{
-        Alert.alert(res.data?.message)
+        alert(res.data?.message)
 
       }
     })
     .catch((err) => {
-      Alert.alert(err);
+      alert(err);
     });
     setIsLoading(false);
   }
 
   const forgotPassword = async(email)=> {
     setIsLoading(true);
+    console.log(email)
     await axios
     .post(`${apiUrl}/customers/forget-password`, {
       email
@@ -94,28 +96,28 @@ export const AuthProvider = ({ children }) => {
     .then(async (res) => {
       // console.log(res.data);
       if(res?.data.success ===true){
-       Alert.alert(res.data.message)
+       alert(res.data.message)
       }else{
-        Alert.alert(res.data?.message)
+        alert(res.data?.message)
 
       }
     })
     .catch((err) => {
-      Alert.alert(err);
+      alert(err);
     });
     setIsLoading(false);
   }
 
   const login = async ( email, password) => {
     setIsLoading(true);
-    console.log(email, password)
+    console.log(email)
     await axios
       .post(`${apiUrl}/customers/login`, {
         email,
         password,
       })
       .then(async (res) => {
-        console.log(res.data);
+        // console.log(res.data);
         if(res?.data.success ===true){
             let userInfo = res?.data;
             setUserInfo(userInfo);
@@ -123,12 +125,12 @@ export const AuthProvider = ({ children }) => {
             await SecureStore.setItemAsync("userInfo", JSON.stringify(userInfo));
             await SecureStore.setItemAsync("userToken", userInfo.customerToken);
         }else{
-          Alert.alert(res.data?.message)
+          alert(res.data?.message)
             
         }
       })
       .catch((err) => {
-        Alert.alert(err);
+        alert(err);
       });
 
     setIsLoading(false);
@@ -154,7 +156,7 @@ export const AuthProvider = ({ children }) => {
        }
       setIsLoading(false);
     } catch (e) {
-      Alert.alert(`isLoggedIn error ${e}`);
+      alert(`isLoggedIn error ${e}`);
     }
   };
 

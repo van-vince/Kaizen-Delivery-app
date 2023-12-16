@@ -173,7 +173,7 @@ const HomeScreen = ({ navigation }) => {
             navigation.navigate("RequestScreen", { state: 0 });
           }}
         >
-          <Text style={styles.text3}>Needs a courier ??</Text>
+          <Text style={styles.text3}>Need a courier ??</Text>
 
           <View style={styles.view4}>
             <Icon

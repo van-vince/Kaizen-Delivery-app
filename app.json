@@ -2,7 +2,7 @@
   "expo": {
     "name": "Kaizen",
     "slug": "kaizen",
-    "version": "1.0.0",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/app-icon.png",
     "userInterfaceStyle": "light",
@@ -30,13 +30,13 @@
         "foregroundImage": "./assets/app-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.kaizen.kaizen",
+      "package": "com.vanvince.kaizen",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyCfARqjJgmhmIp2XDWlYnvv63x0rxvLFsA"
         }
-
-      }
+      },
+      "versionCode": 7
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -56,5 +56,5 @@
     ]
   ],
 
-  "scheme": "com.kaizen.kaizen"
+  "scheme": "com.vanvince.kaizen"
 }

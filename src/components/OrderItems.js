@@ -9,9 +9,19 @@ export default function OrderItem({photo, title, subTitle, dropOff, onPress}) {
       flexDirection:'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 30,
+      marginBottom: 10,
+      padding: 5,
       borderBottomWidth: 0.3,
-      borderBottomColor: 'gray'
+      borderBottomColor: '#D8D8D8',
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 2,
+      elevation: 1,
+
     }}>
       <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
         <Image

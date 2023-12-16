@@ -74,7 +74,7 @@ const OrderDetailsScreen = ({ navigation, route }) => {
       contact: customer.contact,
       name: customer.name,
       cusLocation: destinationAddress,
-      deliveryCharge: customerCharge
+      deliveryCharge: customerCharge.substring('GHC '.length)
     },
   });
 
@@ -94,30 +94,24 @@ const OrderDetailsScreen = ({ navigation, route }) => {
           contact: data.cusContact,
         },
         itemType: data.itemType,
-        paymentType: data.paymentType,
-        amount: data.amount,
+        deliveryType: data.deliveryType,
+        // amount: data.amount,
         charge: data.deliveryCharge,
         creator: customer._id,
       })
       .then(async (res) => {
-        // console.log(res.data);
+        console.log(res.data);
         if (res?.data.success === true) {
-          Alert.alert('Congratulations!!', res.data.message,
-          [
-            {
-              text: 'Ok',
-              onPress: () => navigation.navigate("HomeScreen"),
-              style: 'default',
-            },
-          ]
-          );
+          Alert.alert('Congratulations!!', res.data.message);
         } else {
-          Alert.alert(res.data?.message);
+          alert(res.data?.message);
         }
+        navigation.navigate("SuccessScreen", { success: res?.data?.success})
       })
       .catch((err) => {
-        Alert.alert(err);
+        alert(err);
       });
+      reset()
       setIsLoading(false);
   };
 
@@ -349,24 +343,24 @@ const OrderDetailsScreen = ({ navigation, route }) => {
                   onValueChange={onChange}
                 >
                   <Picker.Item
-                    label="Payment Type"
+                    label="Delivery Type"
                     value={""}
                     style={{ border: 1 }}
                   />
-                  <Picker.Item label="COD" value="COD" />
-                  <Picker.Item label="Card" value="PAID" />
+                  <Picker.Item label="Same-day" value="same-day" />
+                  <Picker.Item label="Next-day" value="next-day" />
                 </Picker>
               )}
-              name="paymentType"
+              name="deliveryType"
             />
-            {errors.paymentType && (
+            {errors.deliveryType && (
               <Text style={{ color: "red", marginBottom: 10 }}>
                 This is required.
               </Text>
             )}
           </View>
 
-          <View>
+          {/* <View>
             <Controller
               control={control}
               rules={{
@@ -389,7 +383,7 @@ const OrderDetailsScreen = ({ navigation, route }) => {
                 This is required.
               </Text>
             )}
-          </View>
+          </View> */}
         </View>
 
         <View>
