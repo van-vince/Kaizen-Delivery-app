@@ -37,9 +37,15 @@ const DetailsScreen = ({ navigation, route }) => {
     Linking.openURL(phoneNumber);
  };
 
-
 //  const date = format(data.updatedAt, "MMMM do, yyyy H:mma")
    const date = new Date(data.updatedAt)
+
+   const pending = data?.status.text === 'Pending'
+   const assigned = data?.status.text === 'Assigned'
+   const delivered = data?.status.text === 'Delivered'
+   const cancelled = data?.status.text === 'Cancelled'
+
+   
 
   return (
     <SafeAreaView style={styles.container}>
@@ -64,7 +70,7 @@ const DetailsScreen = ({ navigation, route }) => {
           gap: 2,
         }}
       >
-        <View style={styles.view2}>
+        <View style={[pending? styles.view2 : assigned ? styles.view3 : delivered ? styles.view4 : styles.view5]}>
           <Icon
             type="material-community"
             name="check-underline"
@@ -84,14 +90,7 @@ const DetailsScreen = ({ navigation, route }) => {
             >
               Status:
             </Text>
-            <Text
-              style={{
-                color: "#333",
-                fontSize: 18,
-                fontWeight: 700,
-                marginLeft: 10,
-              }}
-            >
+            <Text style={[pending? styles.view6 : assigned ? styles.view7 : delivered ? styles.view8 : styles.view9]}>
               {data?.status.text}
             </Text>
           </View>
@@ -200,7 +199,7 @@ const DetailsScreen = ({ navigation, route }) => {
                           marginRight: 10,
                         }}
                       >
-                        {data.courier.name} {data.courier.surname}
+                        {data?.courier.name} {data?.courier.surname}
                       </Text>
                     </View>
                     <View style={{ flexDirection: "row" }}>
@@ -222,7 +221,7 @@ const DetailsScreen = ({ navigation, route }) => {
                           marginRight: 10,
                         }}
                       >
-                        {data.courier.phone}
+                        {data?.courier.phone}
                       </Text>
                     </View>
                   </View>
@@ -467,9 +466,80 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginRight: 8,
     marginBottom: 5,
+    backgroundColor: "orange",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  view3: {
+    width: 45,
+    height: 45,
+    borderRadius: 25,
+    marginRight: 8,
+    marginBottom: 5,
+    backgroundColor: "purple",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  view4: {
+    width: 45,
+    height: 45,
+    borderRadius: 25,
+    marginRight: 8,
+    marginBottom: 5,
     backgroundColor: "green",
     alignItems: "center",
     justifyContent: "center",
+  },
+  view5: {
+    width: 45,
+    height: 45,
+    borderRadius: 25,
+    marginRight: 8,
+    marginBottom: 5,
+    backgroundColor: "red",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  view6: {
+    color: "#ffff",
+    fontSize: 18,
+    fontWeight: 700,
+    marginLeft: 10, 
+    backgroundColor: 'orange', 
+    padding: 5, 
+    borderRadius: 10, 
+    paddingHorizontal: 20 
+  },
+  view7: {
+    color: "#ffff",
+    fontSize: 18,
+    fontWeight: 700,
+    marginLeft: 10, 
+    backgroundColor: 'purple', 
+    padding: 5, 
+    borderRadius: 10, 
+    paddingHorizontal: 20 
+  },
+  view8: {
+    color: "#ffff",
+    fontSize: 18,
+    fontWeight: 700,
+    marginLeft: 10, 
+    backgroundColor: 'green', 
+    padding: 5, 
+    borderRadius: 10, 
+    paddingHorizontal: 20 
+  },
+  view9: {
+    color: "#ffff",
+    fontSize: 18,
+    fontWeight: 700,
+    marginLeft: 10, 
+    backgroundColor: 'red', 
+    padding: 5, 
+    borderRadius: 10, 
+    paddingHorizontal: 20 
   },
 
   elevation: {

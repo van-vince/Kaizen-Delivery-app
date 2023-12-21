@@ -60,10 +60,10 @@ const CustomDrawer = props => {
                 color: '#fff',
                 marginRight: 5,
               }}>
-              Earn Coins
+              Ratings
             </Text>
             <FontAwesome5 name="coins" size={14} color="#fff" />
-            <Text style={{color: 'white', marginLeft:10}}>*5.00</Text>
+            <Text style={{color: 'white', marginLeft:10}}>**5.00</Text>
           </View>
         </ImageBackground>
         <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 10}}>

@@ -47,24 +47,25 @@ const Orders = ({ navigation }) => {
       setIsLoading(false);
     };
     orders();
-  }, [currentOrders]);
+  }, []);
 
-  // const onRefresh = React.useCallback(() => {
-  //   setRefreshing(true);
-  //   setTimeout(() => {
-  //      axios
-  //       .get(`${apiUrl}/customers/${id}`)
-  //       .then(async (res) => {
-  //         // console.log(res.data)
-  //         setCurrentOrders(res.data.allOrders);
-  //         dispatchOrders({ type: "ADD_ORDERS", payload: { orders: res.data.allOrders } });
-  //       })
-  //       .catch((err) => {
-  //         alert(err);
-  //       });
-  //     setRefreshing(false);
-  //   }, 2000);
-  // }, []);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+    const orders =   axios
+        .get(`${apiUrl}/customers/${id}`)
+        .then(async (res) => {
+          // console.log(res.data)
+          setCurrentOrders(res.data.allOrders);
+          dispatchOrders({ type: "ADD_ORDERS", payload: { orders: res.data.allOrders } });
+        })
+        .catch((err) => {
+          alert(err);
+        });
+      setRefreshing(false);
+      orders()
+    }, 3000);
+  }, [currentOrders]);
 
   const newOrders = [...currentOrders].sort((a, b) => b.id - a.id)
   // console.log(newOrders)

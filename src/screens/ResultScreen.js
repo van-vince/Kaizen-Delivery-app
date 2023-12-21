@@ -34,14 +34,12 @@ const data = [
     title: "Standard",
     multiplier: 1,
     image: require("../../assets/rider2.png"),
-    price: 0
   },
   {
     id: "express",
     title: "Express",
     multiplier: 1.2,
     image: require("../../assets/rider.png"),
-    price: 0
   },
 ];
 
@@ -75,10 +73,7 @@ const ResultScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     setUserOrigin({ latitude: origin.latitude, longitude: origin.longitude });
-    setUserDestination({
-      latitude: destination.latitude,
-      longitude: destination.longitude,
-    });
+    setUserDestination({latitude: destination.latitude,longitude: destination.longitude,});
 
     setOriginAddress(origin.address);
     setDestinationAddress(destination.address);
@@ -91,7 +86,6 @@ const ResultScreen = ({ navigation, route }) => {
 
   const [selected, setSelected] = useState(null);
 
-  const [charge, setCharge] = useState(null);
 
   const chargeRate = 3.5;
 

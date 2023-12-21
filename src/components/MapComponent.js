@@ -31,7 +31,6 @@ const MapComponent = ({userOrigin, userDestination, originAddress, destinationAd
  
     useEffect(()=> {
       if(!userOrigin || !userDestination) return;
-      
       const getTravelTime = async() => {
        fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${originAddress}&destinations=${destinationAddress}&units=imperial&key=${GOOGLE_MAPS_APIKEY}`, 
             ).then(res => res.json())
@@ -40,7 +39,7 @@ const MapComponent = ({userOrigin, userDestination, originAddress, destinationAd
                 distance:data.rows[0].elements[0].distance,
                 duration:data.rows[0].elements[0].duration
             }})
-            // console.log(data)
+            console.log(data)
             }).catch((err)=> Alert.alert(err))
       }
        getTravelTime();      

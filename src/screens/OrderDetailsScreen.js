@@ -343,12 +343,12 @@ const OrderDetailsScreen = ({ navigation, route }) => {
                   onValueChange={onChange}
                 >
                   <Picker.Item
-                    label="Delivery Type"
+                    label="Delivery Time"
                     value={""}
                     style={{ border: 1 }}
                   />
-                  <Picker.Item label="Same-day" value="same-day" />
-                  <Picker.Item label="Next-day" value="next-day" />
+                  <Picker.Item label="Same-day" value="Same-day" />
+                  <Picker.Item label="Next-day" value="Next-day" />
                 </Picker>
               )}
               name="deliveryType"
