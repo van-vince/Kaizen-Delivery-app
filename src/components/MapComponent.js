@@ -39,7 +39,7 @@ const MapComponent = ({userOrigin, userDestination, originAddress, destinationAd
                 distance:data.rows[0].elements[0].distance,
                 duration:data.rows[0].elements[0].duration
             }})
-            console.log(data)
+            // console.log(data)
             }).catch((err)=> Alert.alert(err))
       }
        getTravelTime();      

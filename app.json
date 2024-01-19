@@ -2,7 +2,7 @@
   "expo": {
     "name": "Kaizen",
     "slug": "kaizen",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/app-icon.png",
     "userInterfaceStyle": "light",
@@ -36,7 +36,7 @@
           "apiKey": "AIzaSyCfARqjJgmhmIp2XDWlYnvv63x0rxvLFsA"
         }
       },
-      "versionCode": 7
+      "versionCode": 8
     },
     "web": {
       "favicon": "./assets/favicon.png"

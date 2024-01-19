@@ -15,6 +15,7 @@ import axios from "axios";
 
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+// console.log(apiUrl)
 
 const Orders = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState(1);
@@ -49,10 +50,10 @@ const Orders = ({ navigation }) => {
     orders();
   }, []);
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = () => {
     setRefreshing(true);
     setTimeout(() => {
-    const orders =   axios
+     axios
         .get(`${apiUrl}/customers/${id}`)
         .then(async (res) => {
           // console.log(res.data)
@@ -63,9 +64,8 @@ const Orders = ({ navigation }) => {
           alert(err);
         });
       setRefreshing(false);
-      orders()
-    }, 3000);
-  }, [currentOrders]);
+    }, 2000);
+  };
 
   const newOrders = [...currentOrders].sort((a, b) => b.id - a.id)
   // console.log(newOrders)
@@ -77,7 +77,7 @@ const Orders = ({ navigation }) => {
 
   return (
     <SafeAreaView>
-      <View style={{ marginVertical: 10 }}>
+      <View style={{}}>
         {/* <CustomSwitch
           selectionMode={1}
           option1={"Active Orders"}
@@ -86,9 +86,9 @@ const Orders = ({ navigation }) => {
         /> */}
       </View>
       <ScrollView
-        // refreshControl={
-        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        // }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={() => onRefresh()} />
+        }
       >
         {/* {activeTab === 1 && */}
         {

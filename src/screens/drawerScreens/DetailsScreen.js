@@ -9,14 +9,20 @@ import {
   Linking,
   Platform,
   Image,
+  ActivityIndicator,
+  Alert,
+  Button,
 } from "react-native";
 import React, { useContext, useState } from "react";
 import { OrderContext } from "../../context/contexts";
 import { Icon } from "@rneui/themed";
 import { colors, parameters } from "../../global/styles";
-
+import { Modal } from "react-native";
+import axios from "axios";
 
 const windowWidth = Dimensions.get("window").width;
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
 
 const DetailsScreen = ({ navigation, route }) => {
   const { id } = route.params;
@@ -31,21 +37,55 @@ const DetailsScreen = ({ navigation, route }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   dialCall = (number) => {
-    let phoneNumber = '';
-    if (Platform.OS === 'android') { phoneNumber = `tel:${number}`; }
-    else {phoneNumber = `telprompt:${number}`; }
+    let phoneNumber = "";
+    if (Platform.OS === "android") {
+      phoneNumber = `tel:${number}`;
+    } else {
+      phoneNumber = `telprompt:${number}`;
+    }
     Linking.openURL(phoneNumber);
- };
+  };
 
-//  const date = format(data.updatedAt, "MMMM do, yyyy H:mma")
-   const date = new Date(data.updatedAt)
+  const date = new Date(data.updatedAt);
 
-   const pending = data?.status.text === 'Pending'
-   const assigned = data?.status.text === 'Assigned'
-   const delivered = data?.status.text === 'Delivered'
-   const cancelled = data?.status.text === 'Cancelled'
+  const pending = data?.status.text === "Pending";
+  const assigned = data?.status.text === "Assigned";
+  const delivered = data?.status.text === "Delivered";
+  const cancelled = data?.status.text === "Cancelled";
 
-   
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleMutate = async() => {
+    const events = {id: 5, text: 'Cancelled'}
+    setIsLoading(true);
+    await axios
+    .patch(`${apiUrl}/orders/${id}`, {
+      events
+    })
+    .then(async (res) => {
+      console.log(res.data);
+      if(res?.data.success ===true){
+        Alert.alert(res.data.message)
+      }else{
+        Alert.alert(res.data?.message)
+      }
+      navigation.navigate("HomeScreen")
+    })
+    .catch((err) => {
+      alert(err);
+    });
+    setIsLoading(false);
+  }
+
+  if (isLoading)
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <ActivityIndicator size={"large"} />
+    </View>
+  );
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,6 +100,41 @@ const DetailsScreen = ({ navigation, route }) => {
         <Text style={{ marginLeft: 20, fontSize: 20 }}> Order Details</Text>
       </View>
 
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {setModalVisible(!modalVisible)}}
+          >
+            <View style={{top: 60, left: 20}}>
+              <View style={styles.modalView}>
+                <View
+                  style={{
+                    alignItems: "center",
+                    marginBottom: 30,
+                  }}
+                >
+                  <Text style={styles.modalText}>Are you sure you want to cancel this order?</Text>
+
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'}}>
+                <TouchableOpacity
+                  style={{backgroundColor:'#0aada8', padding: 5, width: 60, borderRadius: 5, alignItems: 'center'}}
+                  onPress={() => {handleMutate(); setModalVisible(!modalVisible)}}
+                >
+                  <Text style={{color: 'white'}}>Yes</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{backgroundColor: colors.grey3, padding: 5, width: 60, borderRadius: 5, alignItems: 'center'}}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={{color: 'white'}}>No</Text>
+                </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+
       <View
         style={{
           flexDirection: "row",
@@ -70,7 +145,17 @@ const DetailsScreen = ({ navigation, route }) => {
           gap: 2,
         }}
       >
-        <View style={[pending? styles.view2 : assigned ? styles.view3 : delivered ? styles.view4 : styles.view5]}>
+        <View
+          style={[
+            pending
+              ? styles.view2
+              : assigned
+              ? styles.view3
+              : delivered
+              ? styles.view4
+              : styles.view5,
+          ]}
+        >
           <Icon
             type="material-community"
             name="check-underline"
@@ -90,9 +175,56 @@ const DetailsScreen = ({ navigation, route }) => {
             >
               Status:
             </Text>
-            <Text style={[pending? styles.view6 : assigned ? styles.view7 : delivered ? styles.view8 : styles.view9]}>
+            <Text
+              style={[
+                pending
+                  ? styles.view6
+                  : assigned
+                  ? styles.view7
+                  : delivered
+                  ? styles.view8
+                  : styles.view9,
+              ]}
+            >
               {data?.status.text}
             </Text>
+            <TouchableOpacity
+              style={{
+                marginLeft: 30,
+                backgroundColor: colors.grey10,
+                borderRadius: 50,
+                padding: 5,
+              }}
+              onPress={() => (menuOpen ? setMenuOpen(false) : setMenuOpen(true))}
+            >
+              <Icon
+                type="material-community"
+                name="dots-vertical"
+                color={colors.black}
+                size={32}
+              />
+            </TouchableOpacity>
+            {menuOpen &&
+            <View
+              style={{
+                zIndex: 9999,
+                padding: 5,
+                elevation: 20,
+                position: "absolute",
+                right: 15,
+                top: 45,
+                backgroundColor: 'red',
+                borderRadius: 5
+              }}
+            >
+              <Button 
+              title='Cancel Order'
+              color= 'red'
+              disabled={delivered || cancelled}
+              onPress={() => {setModalVisible(true) ; setMenuOpen(false)}}
+              />
+            </View>
+            }
           </View>
 
           <View style={{ flexDirection: "row" }}>
@@ -114,11 +246,12 @@ const DetailsScreen = ({ navigation, route }) => {
                 marginBottom: 10,
               }}
             >
-              {date.toUTCString().substring(0, 22)} 
+              {date.toUTCString().substring(0, 22)}
             </Text>
           </View>
         </View>
       </View>
+
       <View
         style={{
           height: 44,
@@ -137,11 +270,12 @@ const DetailsScreen = ({ navigation, route }) => {
           onPress={() => (isOpen ? setIsOpen(false) : setIsOpen(true))}
           style={{
             flex: 1,
-            backgroundColor: colors.orange,
+            backgroundColor: '#0aada8',
             borderRadius: 5,
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "row",
+            zIndex: -1,
           }}
         >
           <Text
@@ -227,7 +361,9 @@ const DetailsScreen = ({ navigation, route }) => {
                   </View>
                 </View>
                 <TouchableOpacity
-                  onPress={()=>{dialCall(data.courier.phone)}}
+                  onPress={() => {
+                    dialCall(data.courier.phone);
+                  }}
                   style={{
                     backgroundColor: "green",
                     borderRadius: 10,
@@ -236,7 +372,7 @@ const DetailsScreen = ({ navigation, route }) => {
                     flexDirection: "row",
                     marginHorizontal: 40,
                     marginTop: 20,
-                    padding: 10
+                    padding: 10,
                   }}
                 >
                   <Icon
@@ -403,7 +539,7 @@ const DetailsScreen = ({ navigation, route }) => {
             padding: 3,
           }}
         >
-         Delivery Type
+          Delivery Type
         </Text>
         <Text
           style={{
@@ -451,6 +587,29 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: parameters.statusBarHeight,
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    // marginTop: 22,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  modalView: {
+    // margin: 20,
+    width: windowWidth - 40,
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 30,
+    // alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
   view1: {
     flexDirection: "row",
     backgroundColor: colors.white,
@@ -459,6 +618,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     zIndex: 8,
     shadowRadius: 1,
+  },
+  modalText: {
+    textAlign: "center",
+    fontWeight: 500,
+    fontSize: 18,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 10,
+    backgroundColor: "#00cc00",
   },
   view2: {
     width: 45,
@@ -505,41 +676,41 @@ const styles = StyleSheet.create({
     color: "#ffff",
     fontSize: 18,
     fontWeight: 700,
-    marginLeft: 10, 
-    backgroundColor: 'orange', 
-    padding: 5, 
-    borderRadius: 10, 
-    paddingHorizontal: 20 
+    marginLeft: 10,
+    backgroundColor: "orange",
+    padding: 5,
+    borderRadius: 10,
+    paddingHorizontal: 20,
   },
   view7: {
     color: "#ffff",
     fontSize: 18,
     fontWeight: 700,
-    marginLeft: 10, 
-    backgroundColor: 'purple', 
-    padding: 5, 
-    borderRadius: 10, 
-    paddingHorizontal: 20 
+    marginLeft: 10,
+    backgroundColor: "purple",
+    padding: 5,
+    borderRadius: 10,
+    paddingHorizontal: 20,
   },
   view8: {
     color: "#ffff",
     fontSize: 18,
     fontWeight: 700,
-    marginLeft: 10, 
-    backgroundColor: 'green', 
-    padding: 5, 
-    borderRadius: 10, 
-    paddingHorizontal: 20 
+    marginLeft: 10,
+    backgroundColor: "green",
+    padding: 5,
+    borderRadius: 10,
+    paddingHorizontal: 20,
   },
   view9: {
     color: "#ffff",
     fontSize: 18,
     fontWeight: 700,
-    marginLeft: 10, 
-    backgroundColor: 'red', 
-    padding: 5, 
-    borderRadius: 10, 
-    paddingHorizontal: 20 
+    marginLeft: 10,
+    backgroundColor: "red",
+    padding: 5,
+    borderRadius: 10,
+    paddingHorizontal: 20,
   },
 
   elevation: {
@@ -556,21 +727,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 20,
     margin: 5,
-    backgroundColor: 'yellow',
+    backgroundColor: "yellow",
     padding: 20,
     marginTop: 0,
-    borderRadius: 5
+    borderRadius: 5,
   },
 });
-
-{
-  /* <View style={styles.view2}>
-            <Icon
-              type="material-community"
-              name="chevron-right"
-              // color={colors.grey1}
-              size={32}
-              onPress={() => navigation.goBack()}
-            />
-          </View> */
-}

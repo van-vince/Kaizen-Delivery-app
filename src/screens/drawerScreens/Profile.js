@@ -104,7 +104,7 @@ const Profile = ({ navigation }) => {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert("Profile editing exited");
+              // Alert.alert("Profile editing exited");
               setModalVisible(!modalVisible);
             }}
           >

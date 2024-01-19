@@ -99,7 +99,6 @@ export const AuthProvider = ({ children }) => {
        alert(res.data.message)
       }else{
         alert(res.data?.message)
-
       }
     })
     .catch((err) => {

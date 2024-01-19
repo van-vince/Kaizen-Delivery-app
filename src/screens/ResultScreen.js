@@ -8,8 +8,13 @@ import {
   TextInput,
   SafeAreaView,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState, useContext, useEffect, useRef } from "react";
+import BottomSheet, {
+  BottomSheetFlatList,
+  BottomSheetSectionList,
+} from "@gorhom/bottom-sheet";
+import React, { useState, useContext, useEffect, useRef, useMemo, useCallback } from "react";
 import { colors, parameters } from "../global/styles";
 // import { rideData } from "../global/data";
 import MapComponent from "../components/MapComponent";
@@ -23,25 +28,13 @@ import {
 import { FlatList } from "react-native-gesture-handler";
 import "intl";
 import "intl/locale-data/jsonp/en";
+import axios from "axios";
 // import Charge from "../components/Charge";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SCREEN_WIDTH = Dimensions.get("window").width;
-
-const data = [
-  {
-    id: "standard",
-    title: "Standard",
-    multiplier: 1,
-    image: require("../../assets/rider2.png"),
-  },
-  {
-    id: "express",
-    title: "Express",
-    multiplier: 1.2,
-    image: require("../../assets/rider.png"),
-  },
-];
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+// console.log(apiUrl)
 
 
 const ResultScreen = ({ navigation, route }) => {
@@ -84,29 +77,97 @@ const ResultScreen = ({ navigation, route }) => {
   }, [origin, destination, travelTime]);
   
 
+  const [isLoading, setIsLoading] = useState(false);
   const [selected, setSelected] = useState(null);
 
+  const snapPoints = useMemo(() => [ "45%", "75%"], []);
+  const handleSheetChange = useCallback((index) => {}, []);
+  const bottomSheetRef = useRef();
 
-  const chargeRate = 3.5;
+  const [priceData, setPriceData] = useState(null)
+
+  // getting app setting from database
+  useEffect(() => {
+    const settings = async () => {
+      setIsLoading(true);
+      await axios
+        .get(`${apiUrl}/appSettings`)
+        .then(async (res) => {
+          // console.log(res.data)
+          setPriceData(res?.data)
+        })
+        .catch((err) => {
+          alert(err);
+        });
+        setIsLoading(false);
+    };
+    settings();
+  }, []);
+
+  // define app settings 
+  const records = priceData ?? []
+  const noRiderAvailable = records[2]?.value === 'True'
+
+  const discount = records[3]?.value
+  const newDiscount = discount/100
+  // console.log(newDiscount)
+
+  const chargeRate = records[1]?.value;
+  // console.log(chargeRate)
+
+// Courier types data
+  const data = [
+    {
+      id: "standard",
+      title: "Standard",
+      multiplier: 1,
+      image: require("../../assets/rider2.png"),
+      time: 'In standard time'
+    },
+    {
+      id: "express",
+      title: "Express",
+      multiplier: `${records[0]?.value}`,
+      image: require("../../assets/rider.png"),
+      time: 'Quick delivery'
+    },
+  ];
+
 
   //Calculate charges for both standard and express the dispatch it top context store
   useEffect(() => {
     //info about standard charge
     const info = data[0]
     const multiplier1 = info.multiplier
-    const firstCharge = new Intl.NumberFormat("en-gh", {
-      style: "currency",
-      currency: "Ghc",
-    }).format((userTravelTime?.duration?.value * chargeRate * multiplier1) / 100)
+    let firstCharge = null
+    if(discount > 0){
+      firstCharge = new Intl.NumberFormat("en-gh", {
+        style: "currency",
+        currency: "Ghc",
+      }).format(Math.round(((userTravelTime?.duration?.value * chargeRate * multiplier1) / 100) - (((userTravelTime?.duration?.value * chargeRate * multiplier1) / 100)*newDiscount) ))
+    }else {
+      firstCharge = new Intl.NumberFormat("en-gh", {
+        style: "currency",
+        currency: "Ghc",
+      }).format(Math.round((userTravelTime?.duration?.value * chargeRate * multiplier1) / 100))
+    }
     // console.log(firstCharge)
 
     //info about express charge
     const info2 = data[1]
     const multiplier2 = info2.multiplier
-    const secondCharge = new Intl.NumberFormat("en-gh", {
-      style: "currency",
-      currency: "Ghc",
-    }).format((userTravelTime?.duration?.value * chargeRate * multiplier2) / 100)
+    let secondCharge = null
+    if(discount > 0){
+      secondCharge = new Intl.NumberFormat("en-gh", {
+        style: "currency",
+        currency: "Ghc",
+      }).format(Math.round(((userTravelTime?.duration?.value * chargeRate * multiplier2) / 100) - (((userTravelTime?.duration?.value * chargeRate * multiplier2) / 100)*newDiscount) ))
+    }else {
+      secondCharge = new Intl.NumberFormat("en-gh", {
+        style: "currency",
+        currency: "Ghc",
+      }).format(Math.round((userTravelTime?.duration?.value * chargeRate * multiplier2) / 100))
+    }
     // console.log(secondCharge)
 
     //dispatch to context store
@@ -123,10 +184,8 @@ const ResultScreen = ({ navigation, route }) => {
           }
         ]} });
     
-  }, [userTravelTime])
+  }, [userTravelTime, priceData])
 
-
-  const ref = useRef();
 
 
   return (
@@ -149,7 +208,7 @@ const ResultScreen = ({ navigation, route }) => {
               size={30}
               source={require("../../assets/blankProfilePic.jpg")}
             />
-            <Text style={{ marginLeft: 5 }}>For someone</Text>
+            <Text style={{ marginLeft: 5 }}>New Route</Text>
             <Icon
               type="material-community"
               name="chevron-down"
@@ -203,26 +262,32 @@ const ResultScreen = ({ navigation, route }) => {
         />
       </View>
 
-      <View style={styles.modalView}>
+      <BottomSheet
+      ref={bottomSheetRef}
+        index={route.params.state}
+        snapPoints={snapPoints}
+        onChange={handleSheetChange}
+      >
+        <View >
         <Text
           style={{
             textAlign: "center",
-            paddingBottom: 20,
-            fontSize: 18,
+            paddingBottom: 5,
+            fontSize: 22,
             fontWeight: 700,
           }}
         >
-          Choose a Courier Type
+          CHOOSE A COURIER 
         </Text>
-        <View style={{ margin: 5, height: 200 }}>
+        <View style={{ margin: 10}}>
           <FlatList
             data={data}
             keyExtrator={(item) => item.id}
-            renderItem={({ item: { id, title, multiplier, image, }, item }) => (
+            renderItem={({ item: { id, title, multiplier, image, time }, item }) => (
               <TouchableOpacity
+                disabled={noRiderAvailable}
                 onPress={() => setSelected(item)}
-                style={[id === selected?.id ? styles.view17 : styles.view9]}
-                // style={styles.view9}
+                style={[id === selected?.id ? styles.view17 : noRiderAvailable ? styles.view13 : styles.view9 ]}
               >
                 <Image
                   style={{ height: 60, width: 60, resizeMode: "contain" }}
@@ -231,45 +296,78 @@ const ResultScreen = ({ navigation, route }) => {
                 <View>
                   <Text style={{ fontSize: 16, fontWeight: 500 }}>{title}</Text>
                   <Text style={{ fontSize: 12, color: "gray" }}>
-                    {userTravelTime?.duration?.text} travel time
+                    {time}
                   </Text>
                 </View>
-                <Text  
-                // onPress={(event) => setCharge(event._dispatchInstances.memoizedProps.children)}
-                style={{ fontSize: 16, fontWeight: "bold", backgroundColor: colors.grey6, padding:10 , borderRadius:5}}
-                >
-                 { 
+                <View  style={{ backgroundColor: colors.grey6, padding:10 , borderRadius:5, marginRight: 5}}>
+                {/* Price shown when discount is allowed */}
+                {isLoading && <ActivityIndicator size={"small"} />}
+                {discount > 0 && 
+                <>
+                <Text style={{ fontSize: 10, fontWeight: 300, textAlign: 'right', textDecorationLine: 'line-through'}}>
+                  { 
                  new Intl.NumberFormat("en-gh", {
                     style: "currency",
                     currency: "Ghc",
-                  }).format((userTravelTime?.duration?.value * chargeRate * multiplier) / 100)
+                  }).format(Math.round((userTravelTime?.duration?.value * chargeRate * multiplier) / 100))
                   }
-                </Text>
+                  </Text>
+                  <Text style={{ fontSize: 16, fontWeight: "bold"}}>
+                    {new Intl.NumberFormat("en-gh", {
+                      style: "currency",
+                      currency: "Ghc",
+                    }).format(Math.round(((userTravelTime?.duration?.value * chargeRate * multiplier) / 100) - (((userTravelTime?.duration?.value * chargeRate * multiplier) / 100)*newDiscount) ))}
+                  </Text>
+                  </>
+                  }
+                 {/* Price shown when there is no discount */}
+                 {discount === 0 &&
+                  <Text style={{ fontSize: 16, fontWeight: "bold"}}>
+                  { 
+                  new Intl.NumberFormat("en-gh", {
+                      style: "currency",
+                      currency: "Ghc",
+                    }).format(Math.round((userTravelTime?.duration?.value * chargeRate * multiplier) / 100))
+                    }
+                  </Text>
+                 }
+                </View>
               </TouchableOpacity>
             )}
           />
-          <View>
+        </View>
+      </View> 
+      </BottomSheet>
+      
+      <View   
+      style={[noRiderAvailable ? styles.view15 : styles.view14]}>
+          {discount > 0 && !noRiderAvailable && 
+          <Text style={{textAlign: 'center', margin: 1, color: 'white', fontSize: 13}}>10% discount applied</Text>
+          }
+          {noRiderAvailable && 
+          <Text style={{textAlign: 'center', margin: 1, color: 'white', fontSize: 13}}>Oops.. all riders are busy now</Text>
+          }
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate("OrderDetailsScreen", { id: selected?.id});
               }}
               disabled={!selected}
               style={{
-                backgroundColor: colors.orange,
-                padding: 10,
-                borderRadius: 5,
-                bottom: 0,
-              }}
+                padding: 15,
+                backgroundColor: colors.orange, 
+                width: '100%',
+                borderRadius: 3,
+                bottom: 0, 
+            }}
             >
               <Text
-                style={{ textAlign: "center", color: "white", fontSize: 16 }}
+                style={{ textAlign: "center", color: "white", fontSize: 20,  fontWeight: 800,}}
               >
                 Choose {selected?.title}
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </View>
+
     </SafeAreaView>
   );
 };
@@ -352,12 +450,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingBottom: 10,
+    marginBottom: 15, 
+    borderWidth: .3,
+    borderRadius: 10,
+    padding: 5
+  },
+  view13: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingBottom: 10,
+    marginBottom: 15, 
+    opacity: 0.4,
+    borderWidth: .3,
+    padding: 5,
+    borderRadius: 10,
+
   },
   view17: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#f7e7d0",
+    marginBottom: 15,
     padding: 5,
     borderRadius: 10,
     borderWidth: 1,
@@ -398,200 +513,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.grey1,
   },
-  text3: {
-    fontSize: 16,
-    color: colors.black,
-    fontWeight: "bold",
-    marginRight: 5,
-  },
-
-  text4: { color: colors.grey2, marginTop: 4 },
-
-  view13: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-  },
-
-  button1: {
-    height: 40,
-    width: 100,
-    backgroundColor: colors.grey6,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20,
-  },
-
-  button2: {
-    height: 50,
-    backgroundColor: colors.grey10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20,
-    marginHorizontal: 30,
-  },
-
-  button1Text: {
-    fontSize: 17,
-    marginTop: -2,
-    color: colors.black,
-  },
-
-  button2Text: {
-    color: colors.white,
-    fontSize: 23,
-    marginTop: -2,
-  },
 
   view14: {
-    alignItems: "center",
-    flex: 5,
-    flexDirection: "row",
+    position: 'absolute',
+    backgroundColor: 'green',
+    flex: 1,
+    width: '100%',
+    bottom: 0,
+    elevation: 20,
+    borderRadius: 20,
   },
   view15: {
-    backgroundColor: colors.grey6,
-    height: 40,
-    width: 40,
+    position: 'absolute',
+    backgroundColor: colors.grey3,
+    flex: 1,
+    width: '100%',
+    bottom: 0,
+    elevation: 20,
     borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 20,
-  },
+  }
 
-  view16: {
-    flexDirection: "row",
-    alignItems: "baseline",
-  },
 
-  text5: {
-    fontSize: 12,
-    color: colors.black,
-    marginLeft: 3,
-    fontWeight: "bold",
-    paddingBottom: 1,
-  },
-
-  view18: {},
-
-  view19: { flex: 1.7, alignItems: "flex-end" },
-
-  icon: { paddingBottom: 2 },
-
-  image2: { height: 60, width: 60 },
-
-  view20: { marginRight: 10 },
-
-  text6: {
-    fontSize: 15,
-    color: colors.black,
-    fontWeight: "bold",
-  },
-
-  view21: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginHorizontal: 30,
-    marginTop: 15,
-  },
-
-  view22: {
-    alignItems: "center",
-    marginBottom: -20,
-  },
-
-  sectionHeaderContainer: {
-    backgroundColor: "white",
-    marginTop: 30,
-    paddingLeft: 15,
-  },
-
-  text7: {
-    fontSize: 28,
-    color: colors.black,
-    marginRight: 5,
-  },
-
-  text8: {
-    fontSize: 15,
-    color: colors.grey2,
-    textDecorationLine: "line-through",
-  },
-
-  button3: {
-    height: 60,
-    backgroundColor: colors.black,
-    alignItems: "center",
-    justifyContent: "center",
-    width: SCREEN_WIDTH - 110,
-    marginBottom: 10,
-  },
-
-  view23: {
-    flexDirection: "row",
-    backgroundColor: colors.cardbackground,
-    // elevation:10,
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    paddingHorizontal: 20,
-    height: 80,
-  },
-
-  button2Image: {
-    height: 55,
-    width: 55,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.grey6,
-    marginBottom: 10,
-  },
-  text9: { fontSize: 15, color: colors.grey1 },
-
-  map: {
-    marginVertical: 0,
-    width: SCREEN_WIDTH,
-    zIndex: -1,
-  },
-
-  centeredView: {
-    zIndex: 14,
-  },
-  modalView: {
-    marginHorizontal: 5,
-    marginVertical: 10,
-    backgroundColor: "white",
-    borderRadius: 20,
-    paddingHorizontal: 5,
-    paddingVertical: 20,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    zIndex: 16,
-  },
-
-  view24: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 15,
-    paddingHorizontal: 20,
-  },
-
-  view25: {
-    flexDirection: "row",
-    alignItems: "baseline",
-  },
-
-  flatlist: {
-    marginTop: 20,
-  },
-
-  text10: { color: colors.grey2, paddingLeft: 10 },
 });
