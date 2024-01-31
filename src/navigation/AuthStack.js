@@ -9,7 +9,6 @@ const Stack = createNativeStackNavigator();
 
 export function AuthStack() {
   return (
-    // <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
           name="SignInScreen"
@@ -27,6 +26,5 @@ export function AuthStack() {
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
-    // </NavigationContainer>
   );
 }

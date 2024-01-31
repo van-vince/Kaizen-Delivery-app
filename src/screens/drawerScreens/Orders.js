@@ -48,7 +48,7 @@ const Orders = ({ navigation }) => {
       setIsLoading(false);
     };
     orders();
-  }, []);
+  }, [currentOrders]);
 
   const onRefresh = () => {
     setRefreshing(true);

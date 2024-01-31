@@ -20,7 +20,6 @@ export default function RootNavigator() {
   return (
     <NavigationContainer>
       {userToken ? <DrawerNavigator /> : <AuthStack />}
-      {/* <DrawerNavigator /> */}
     </NavigationContainer>
   );
 }

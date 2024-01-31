@@ -6,15 +6,19 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { colors, parameters } from "../global/styles";
 import { Icon, Avatar } from "@rneui/themed";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { OriginContext, DestinationContext } from "../context/contexts";
+import PlaceRow from "../components/placeRow";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SCREEN_WIDTH = Dimensions.get("window").width;
+
+
 
 const DestinationScreen = ({ navigation }) => {
   const { dispatchOrigin } = useContext(OriginContext);
@@ -36,6 +40,7 @@ const DestinationScreen = ({ navigation }) => {
   },[textInput2])
 
   const [destination, setDestination] = useState(false);
+
 
   return (
     <>
@@ -72,11 +77,15 @@ const DestinationScreen = ({ navigation }) => {
             nearbyPlacesApi="GooglePlacesSearch"
             placeholder="Pick up from"
             listViewDisplayed="auto"
+            enablePoweredByContainer={false}
+            isRowScrollable={false}
             debounce={400}
             ref={textInput1}
             minLenght={2}
             fetchDetails={true}
             autoFoccus={true}
+            listLoaderComponent={< ActivityIndicator size={"large"} />}
+            renderRow={(data) => <PlaceRow data={data} />}
             styles={styles.googleplaces}
             query={{
               key: GOOGLE_MAPS_APIKEY,
@@ -90,7 +99,7 @@ const DestinationScreen = ({ navigation }) => {
                 payload: {
                   latitude: details.geometry.location.lat,
                   longitude: details.geometry.location.lng,
-                  address: data.description,
+                  address: data.structured_formatting.main_text ,
                   name: details.name,
                 },
               });
@@ -103,11 +112,15 @@ const DestinationScreen = ({ navigation }) => {
           nearbyPlacesApi="GooglePlacesSearch"
           placeholder="Going to..."
           listViewDisplayed="auto"
+          enablePoweredByContainer={false}
+          isRowScrollable={false}
           debounce={400}
           ref={textInput2}
           minLenght={2}
           fetchDetails={true}
           autoFoccus={true}
+          listLoaderComponent={< ActivityIndicator size={"large"} />}
+          renderRow={(data) => <PlaceRow data={data} />}
           styles={styles.googleplaces}
           query={{
             key: GOOGLE_MAPS_APIKEY,
@@ -120,7 +133,7 @@ const DestinationScreen = ({ navigation }) => {
               payload: {
                 latitude: details.geometry.location.lat,
                 longitude: details.geometry.location.lng,
-                address: data.description,
+                address: data.structured_formatting.main_text,
                 name: details.name,
               },
             });

@@ -51,6 +51,7 @@ const HomeScreen = ({ navigation }) => {
       setLatLng({ latitude: latitude, longitude: longitude });
     } catch (err) {}
   };
+  // console.log(getLocation())
 
   const _map = useRef(1);
 

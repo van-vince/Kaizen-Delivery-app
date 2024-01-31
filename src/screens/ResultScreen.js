@@ -50,9 +50,8 @@ const ResultScreen = ({ navigation, route }) => {
     latitude: destination.latitude,
     longitude: destination.longitude,
   });
-  const [destinationAddress, setDestinationAddress] = useState(
-    destination.address
-  );
+
+  const [destinationAddress, setDestinationAddress] = useState(destination.address);
 
   const { travelTime } = useContext(TravelTimeContext);
   const [userTravelTime, setUserTravelTime] = useState({
@@ -110,7 +109,7 @@ const ResultScreen = ({ navigation, route }) => {
 
   const discount = records[3]?.value
   const newDiscount = discount/100
-  // console.log(newDiscount)
+  // console.log(discount)
 
   const chargeRate = records[1]?.value;
   // console.log(chargeRate)
@@ -118,18 +117,18 @@ const ResultScreen = ({ navigation, route }) => {
 // Courier types data
   const data = [
     {
-      id: "standard",
-      title: "Standard",
-      multiplier: 1,
+      id: "same-day",
+      title: "Same Day",
+      multiplier: `${records[0]?.value}`,
       image: require("../../assets/rider2.png"),
-      time: 'In standard time'
+      time: 'Deliver today'
     },
     {
-      id: "express",
-      title: "Express",
-      multiplier: `${records[0]?.value}`,
+      id: "next-day",
+      title: "Next Day",
+      multiplier: 1,
       image: require("../../assets/rider.png"),
-      time: 'Quick delivery'
+      time: 'Deliver tomorrow'
     },
   ];
 
@@ -185,6 +184,7 @@ const ResultScreen = ({ navigation, route }) => {
         ]} });
     
   }, [userTravelTime, priceData])
+  
 
 
 
@@ -208,7 +208,7 @@ const ResultScreen = ({ navigation, route }) => {
               size={30}
               source={require("../../assets/blankProfilePic.jpg")}
             />
-            <Text style={{ marginLeft: 5 }}>New Route</Text>
+            <Text style={{ marginLeft: 5 }}>Your Route</Text>
             <Icon
               type="material-community"
               name="chevron-down"
@@ -231,13 +231,13 @@ const ResultScreen = ({ navigation, route }) => {
               }}
             >
               <View style={styles.view6}>
-                <Text style={styles.text1}> Pick up from</Text>
+                <Text style={styles.text1}>{originAddress}</Text>
               </View>
             </TouchableOpacity>
             <View style={styles.view7}>
               <TouchableOpacity>
                 <View style={styles.view5}>
-                  <Text style={styles.text1}>...</Text>
+                  <Text style={styles.text1}>{destinationAddress}</Text>
                 </View>
               </TouchableOpacity>
               <View style={styles.view8}>
@@ -321,7 +321,7 @@ const ResultScreen = ({ navigation, route }) => {
                   </>
                   }
                  {/* Price shown when there is no discount */}
-                 {discount === 0 &&
+                 {discount === '0' &&
                   <Text style={{ fontSize: 16, fontWeight: "bold"}}>
                   { 
                   new Intl.NumberFormat("en-gh", {
